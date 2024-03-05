@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('partials/head') %>
+<body>
+   
+    <%- include('partials/navbar') %>
+   <hr>
+    <p  style="font-size: 99px;" align="center">Registro Truco</p>
+
+    <br><br><br>
+
+    <form align="center" id="registrationForm">
+        <div class="container">
+            <label for="newUsername"><b>Usuario: </b></label>
+            <input type="text" placeholder="Inserte Usuario" id="newUsername" name="newUsername">
+        
+            <label for="newPassword"><b>Contraseña: </b></label>
+            <input type="password" placeholder="Inserte Contraseña" id="newPassword" name="newPassword">
+        
+            <button type="submit">Registrar</button>
+          </div>
+    </form>
+
+    <!-- JavaScript para manejar el formulario de registro de usuario -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const registrationForm = document.getElementById('registrationForm');
+
+            registrationForm.addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                // Obtenemos los valores de usuario y contraseña del formulario
+                const newUsername = registrationForm.querySelector('#newUsername').value;
+                const newPassword = registrationForm.querySelector('#newPassword').value;
+
+                // Enviar los datos del formulario al servidor para registro
+                try {
+                    const response = await fetch('/registerUser', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ newUsername, newPassword })
+                    });
+
+                    // Verificar el estado de la respuesta
+                    if (response.ok) {
+                        const data = await response.json();
+                        alert(`¡Bienvenido, ${data.username}! Has sido registrado exitosamente.`);
+                    } else if (response.status === 409) {
+                        alert('El nombre de usuario ya existe en la base de datos. Por favor, elige otro.');
+                    } else {
+                        alert('Error interno del servidor'); // Otros errores
+                    }
+                } catch (error) {
+                    console.error('Error al registrar usuario:', error);
+                    alert('Error al registrar usuario. Por favor, intenta de nuevo.');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
